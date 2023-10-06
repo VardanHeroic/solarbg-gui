@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import xml2js from 'xml2js';
+import img from 'file:///home/vardan/Downloads/ok/0.png'
 import {BrowserRouter,Link,Route,Switch} from "react-router-dom";
 
 const {platform,homedir} = window.require('os')
 const fs = window.require('fs')
+const parser = new xml2js.Parser();
+
 
 export default function Home() {
 	let themePath = homedir() 
@@ -12,10 +16,10 @@ export default function Home() {
 	useEffect(() => {
 		switch(platform()) {
 			case 'linux':
-				themePath += '/.local/share/solarbg/themes/';
+				themePath = homedir() + '/.local/share/solarbg/themes/';
 				break;
 			case 'win32':
-				themePath += '\\AppData\\Roaming\\solarbg\\themes\\';
+				themePath = homedir() +'\\AppData\\Roaming\\solarbg\\themes\\';
 				break;
 			default:
 				console.log('Your os is not supported');
@@ -27,7 +31,23 @@ export default function Home() {
 			const dir = await fs.promises.opendir(path)
 			for await (const dirent of dir) {
 				if (dirent.name.includes('.xml')){
-					currentgnomeThemeArr.push(dirent.name);	
+					let imgPath = ''
+					fs.readFile(path + dirent.name,(err,data) => {
+						parser.parseString(data,(err, result) => {
+							imgPath = result.background.static[0].file[0]
+							currentgnomeThemeArr.push({
+								name:dirent.name,
+								img: imgPath
+							});	
+
+							if (gnomeThemeArr.length != currentgnomeThemeArr.length) {
+								setGnomeThemeArr(currentgnomeThemeArr)	
+							}
+
+						})
+
+					})
+
 				}
 				else{
 					fs.readdir(path+dirent.name, (err, files) => {
@@ -37,9 +57,7 @@ export default function Home() {
 					})
 				}
 			}
-			if (gnomeThemeArr.length != currentgnomeThemeArr.length) {
-				setGnomeThemeArr(currentgnomeThemeArr)	
-			}
+			console.log(currentgnomeThemeArr);
 			if (solarThemeArr.length != currentsolarThemeArr.length) {
 				setSolarThemeArr(currentsolarThemeArr)
 			}
@@ -51,18 +69,23 @@ export default function Home() {
 	
 //	import( (platform == 'win32' ? 'file:\\' : '') + themePath + (platform == 'win32' ? '\\theme.json' : '/theme.json') ,{ assert: { type: "json" } })
 //		.then(module => themeJSON = module.default)
-	console.log(gnomeThemeArr);
 	return (
 		<div className="home">
 		{
-			gnomeThemeArr.map( (element) => {
-				return <h1>{element}</h1>
+			gnomeThemeArr.map( (element,index) => {
+				console.log(element.img);
+				return (
+					<article key={index} >
+						<h1>{element.name}</h1>                                                                     
+						<img src={img} alt=""/>
+					</article>
+				)
 				
 			})
 		}
 		{
-			solarThemeArr.map( (element) => {
-				return <h1>{element}</h1>
+			solarThemeArr.map( (element,index) => {
+				return <h1 key={index} >{element}</h1>
 				
 			})
 		}		
