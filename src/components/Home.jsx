@@ -1,18 +1,65 @@
 import { useEffect, useState } from "react";
 import xml2js from 'xml2js';
-import img from 'file:///home/vardan/Downloads/ok/0.png'
 import {BrowserRouter,Link,Route,Switch} from "react-router-dom";
-
+const { remote } = window.require('electron');
 const {platform,homedir} = window.require('os')
 const fs = window.require('fs')
 const parser = new xml2js.Parser();
+
+function arraysEqual(a, b) {
+	return JSON.stringify(a)==JSON.stringify(b);
+}
 
 
 export default function Home() {
 	let themePath = homedir() 
 	let [gnomeThemeArr, setGnomeThemeArr] = useState([])
 	let [solarThemeArr, setSolarThemeArr] = useState([])
-		
+	
+
+
+
+
+	async function ls(path) {
+		let currentsolarThemeArr = []
+		let currentgnomeThemeArr = []
+		const dir = await fs.promises.opendir(path)
+		for await (const dirent of dir) {
+			if (dirent.name.includes('.xml')){
+				fs.readFile(path + dirent.name,(err,data) => {
+					parser.parseString(data,(err, result) => {
+						let imgPath = `${result.background.transition[0].from[0]}`	
+						fs.readFile(imgPath,(err,data) => {
+							if (err) {
+								console.error(err);
+								return
+							}
+
+							currentgnomeThemeArr.push({
+								name:dirent.name,
+								img:`data:image/png;base64,${Buffer.from(data).toString('base64')}`
+							});
+
+							setGnomeThemeArr(currentgnomeThemeArr)	
+						})
+					})
+				})
+			}
+			else{
+				fs.readdir(path+dirent.name, (err, files) => {
+					if(files.includes('theme.json')){
+						currentsolarThemeArr.push(dirent.name)
+					}
+				})
+			}
+		}
+		if (solarThemeArr.length != currentsolarThemeArr.length) {
+			setSolarThemeArr(currentsolarThemeArr)
+		}
+	}
+
+
+
 	useEffect(() => {
 		switch(platform()) {
 			case 'linux':
@@ -25,63 +72,24 @@ export default function Home() {
 				console.log('Your os is not supported');
 		}
 	
-		async function ls(path) {
-			let currentsolarThemeArr = []
-			let currentgnomeThemeArr = []
-			const dir = await fs.promises.opendir(path)
-			for await (const dirent of dir) {
-				if (dirent.name.includes('.xml')){
-					let imgPath = ''
-					fs.readFile(path + dirent.name,(err,data) => {
-						parser.parseString(data,(err, result) => {
-							imgPath = result.background.static[0].file[0]
-							currentgnomeThemeArr.push({
-								name:dirent.name,
-								img: imgPath
-							});	
-
-							if (gnomeThemeArr.length != currentgnomeThemeArr.length) {
-								setGnomeThemeArr(currentgnomeThemeArr)	
-							}
-
-						})
-
-					})
-
-				}
-				else{
-					fs.readdir(path+dirent.name, (err, files) => {
-						if(files.includes('theme.json')){
-							currentsolarThemeArr.push(dirent.name)
-						}
-					})
-				}
-			}
-			console.log(currentgnomeThemeArr);
-			if (solarThemeArr.length != currentsolarThemeArr.length) {
-				setSolarThemeArr(currentsolarThemeArr)
-			}
-		}
 		ls(themePath).catch(console.error)
-	})
+	},[])
 
 	
 	
-//	import( (platform == 'win32' ? 'file:\\' : '') + themePath + (platform == 'win32' ? '\\theme.json' : '/theme.json') ,{ assert: { type: "json" } })
-//		.then(module => themeJSON = module.default)
 	return (
 		<div className="home">
 		{
 			gnomeThemeArr.map( (element,index) => {
-				console.log(element.img);
 				return (
 					<article key={index} >
 						<h1>{element.name}</h1>                                                                     
-						<img src={img} alt=""/>
+						<img src={element.img} height="500" alt=""/>
 					</article>
 				)
 				
 			})
+
 		}
 		{
 			solarThemeArr.map( (element,index) => {
