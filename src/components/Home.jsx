@@ -1,25 +1,15 @@
 import { useEffect, useState } from "react";
 import xml2js from 'xml2js';
 import {BrowserRouter,Link,Route,Switch} from "react-router-dom";
+import GnomeThemeBlock from "./GnomeThemeBlock";
 const { remote } = window.require('electron');
 const {platform,homedir} = window.require('os')
 const fs = window.require('fs')
 const parser = new xml2js.Parser();
 
-function arraysEqual(a, b) {
-	return JSON.stringify(a)==JSON.stringify(b);
-}
-
-
-export default function Home() {
+export default function Home(props) {
+	let {gnomeThemeArr,setGnomeThemeArr,solarThemeArr,setSolarThemeArr,setEditingTheme} = props;
 	let themePath = homedir() 
-	let [gnomeThemeArr, setGnomeThemeArr] = useState([])
-	let [solarThemeArr, setSolarThemeArr] = useState([])
-	
-
-
-
-
 	async function ls(path) {
 		let currentsolarThemeArr = []
 		let currentgnomeThemeArr = []
@@ -45,16 +35,23 @@ export default function Home() {
 					})
 				})
 			}
-			else{
+			else {
 				fs.readdir(path+dirent.name, (err, files) => {
 					if(files.includes('theme.json')){
-						currentsolarThemeArr.push(dirent.name)
+						fs.readFile(path + dirent.name + '/theme.json',(err,data) => {
+							fs.readFile(path + dirent.name + '/' +  JSON.parse(data)[0].path,(err,imgdata) => {
+								currentsolarThemeArr.push({
+									name:dirent.name,
+									img:`data:image/png;base64,${Buffer.from(imgdata).toString('base64')}`,
+									data: JSON.parse(data)
+								})
+								setSolarThemeArr(currentsolarThemeArr)
+									
+							})
+						})
 					}
 				})
 			}
-		}
-		if (solarThemeArr.length != currentsolarThemeArr.length) {
-			setSolarThemeArr(currentsolarThemeArr)
 		}
 	}
 
@@ -81,19 +78,18 @@ export default function Home() {
 		<div className="home">
 		{
 			gnomeThemeArr.map( (element,index) => {
-				return (
-					<article key={index} >
-						<h1>{element.name}</h1>                                                                     
-						<img src={element.img} height="500" alt=""/>
-					</article>
-				)
-				
+				return <GnomeThemeBlock {...element} key={index} />
 			})
 
 		}
 		{
 			solarThemeArr.map( (element,index) => {
-				return <h1 key={index} >{element}</h1>
+				return (
+					<article key={index} className='themeblock' style={{"background": `url(${element.img})`}} >
+						<h1>{element.name}</h1>     
+						<Link onClick={() => {setEditingTheme(element)}} to={`/edit/${element.name}`}><h2>Edit</h2></Link>
+					</article>
+				)
 				
 			})
 		}		
