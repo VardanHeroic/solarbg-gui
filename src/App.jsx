@@ -35,7 +35,7 @@ function App() {
             <div className="App">
                 <Routes>
                     <Route exact path="/" element=<Home readImg={readImg} themePath={themePath} gnomeThemeArr={gnomeThemeArr} solarThemeArr={solarThemeArr} setGnomeThemeArr={setGnomeThemeArr} setSolarThemeArr={setSolarThemeArr} setEditingTheme={setEditingTheme} /> />
-                    <Route exact path={`/edit/`} element=<Edit readImg={readImg} themePath={themePath} editingTheme={editingTheme} setEditingTheme={setEditingTheme} /> />
+                    <Route exact path={`/edit/`} element=<Edit themePath={themePath} editingTheme={editingTheme} setEditingTheme={setEditingTheme} /> />
                 </Routes>
             </div>
         </BrowserRouter>

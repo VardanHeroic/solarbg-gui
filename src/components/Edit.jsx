@@ -2,16 +2,17 @@ import { useState, useEffect } from "react";
 import Loading from './Loading'
 import { Link } from "react-router-dom";
 import EditElement from "./EditElement";
+import AddEditElement from "./AddEditElement";
 
 const sharp = window.require('sharp')
 const fs = window.require('fs').promises
 
 export default function Edit(props) {
-    let { editingTheme, setEditingTheme, readImg } = props;
+    let { editingTheme, setEditingTheme } = props;
     let [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        //     console.log(editingTheme);
+        setIsLoading(true)
         let promiseArr = editingTheme.data.map(element => {
             return sharp(editingTheme.context + element.path)
                 .resize({ height: 180, width: 320 })
@@ -39,7 +40,7 @@ export default function Edit(props) {
                 afternoon: startArr[i] > endArr[i]
             }
         })
-        fs.writeFile('./theme.json', JSON.stringify(finalArr, null, "\t"))
+        fs.writeFile(`${editingTheme.context}/theme.json`, JSON.stringify(finalArr, null, "\t"))
         console.log(JSON.stringify(finalArr, null, "\t"));
 
     }
@@ -56,7 +57,6 @@ export default function Edit(props) {
 
     return (
         <form onSubmit={save} className="edit">
-            {console.log(editingTheme)}
             <h1>{editingTheme.name}</h1>
             {
 
@@ -64,6 +64,7 @@ export default function Edit(props) {
                     return <EditElement {...element} key={i} id={i} close={close} />
                 })
             }
+            <AddEditElement {...editingTheme} setEditingTheme={setEditingTheme} />
             <Link to="/" onClick={() => { setEditingTheme({}) }}><h2>Back</h2></Link>
             <button type="submit">Save</button>
         </form>

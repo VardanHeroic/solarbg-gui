@@ -1,13 +1,12 @@
-import React from 'react'
-
 export default function EditElement(props) {
+    let { start, end, id, close, img, path } = props
     return (
         <div className="edit-block" >
-            <img src={props.img} alt="" />
-            {props.path}
-            <input type="number" name="start" id="" defaultValue={props.start} />
-            <input type="number" name="end" id="" defaultValue={props.end} />
-            <button type="button" onClick={() => { props.close(props.id) }}>X</button>
+            <img src={img} alt="" />
+            {path}
+            <input type="number" name="start" id="" defaultValue={start} />
+            <input type="number" name="end" id="" defaultValue={end} />
+            <button type="button" onClick={() => { close(id) }}>X</button>
         </div>
 
     )
