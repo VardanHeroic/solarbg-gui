@@ -3,7 +3,8 @@ import xml2js from 'xml2js';
 import { Link } from "react-router-dom";
 import GnomeThemeBlock from "./GnomeThemeBlock";
 import Loading from './Loading'
-const fs = window.require('fs')
+
+const fs = window.require('fs').promises
 const parser = new xml2js.Parser();
 
 export default function Home(props) {
@@ -15,10 +16,10 @@ export default function Home(props) {
         let currentsolarThemeArr = []
         let currentgnomeThemeArr = []
         let promiseArr = []
-        const dir = await fs.promises.readdir(path)
+        const dir = await fs.readdir(path)
         promiseArr = dir.map(dirent => {
             if (dirent.includes('.xml')) {
-                return fs.promises.readFile(path + dirent)
+                return fs.readFile(path + dirent)
                     .then((data) => {
                         return parser.parseStringPromise(data)
                     })
@@ -30,16 +31,15 @@ export default function Home(props) {
                     })
             }
             else {
-                return fs.promises.readdir(path + dirent)
+                return fs.readdir(path + dirent)
                     .then((files) => {
                         if (files.includes('theme.json')) {
-                            return fs.promises.readFile(path + dirent + '/theme.json')
+                            return fs.readFile(path + dirent + '/theme.json')
                         }
                     })
                     .then(async (data) => {
                         currentsolarThemeArr.push({
                             name: dirent,
-                            context: path + dirent + '/',
                             img: await readImg(path + dirent + '/' + JSON.parse(data)[0].path),
                             data: JSON.parse(data)
                         })

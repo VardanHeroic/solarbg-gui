@@ -8,13 +8,12 @@ const sharp = window.require('sharp')
 const fs = window.require('fs').promises
 
 export default function Edit(props) {
-    let { editingTheme, setEditingTheme } = props;
+    let { editingTheme, setEditingTheme, themePath } = props;
     let [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setIsLoading(true)
         let promiseArr = editingTheme.data.map(element => {
-            return sharp(editingTheme.context + element.path)
+            return sharp(themePath + editingTheme.name + '/' + element.path)
                 .resize({ height: 180, width: 320 })
                 .toBuffer()
                 .then(data => { element.img = "data:image/png;base64," + Buffer.from(data).toString('base64') });
@@ -40,7 +39,13 @@ export default function Edit(props) {
                 afternoon: startArr[i] > endArr[i]
             }
         })
-        fs.writeFile(`${editingTheme.context}/theme.json`, JSON.stringify(finalArr, null, "\t"))
+
+        fs.writeFile(`${themePath + editingTheme.name + '/'}/theme.json`, JSON.stringify(finalArr, null, "\t"))
+            .then(() => {
+                if (e.target.elements.themeName.value != editingTheme.name) {
+                    fs.rename(themePath + editingTheme.name, themePath + e.target.elements.themeName.value).then(() => console.log('slam dunk'))
+                }
+            })
         console.log(JSON.stringify(finalArr, null, "\t"));
 
     }
@@ -57,7 +62,7 @@ export default function Edit(props) {
 
     return (
         <form onSubmit={save} className="edit">
-            <h1>{editingTheme.name}</h1>
+            <input type="text" name="themeName" defaultValue={editingTheme.name} required />
             {
 
                 editingTheme.data.map((element, i) => {
