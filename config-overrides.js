@@ -3,7 +3,7 @@
 module.exports = function override(config, env) {
 //	config.plugins.push( new NodePolyfillPlugin() )
 	config.resolve.fallback = {
-//		"timers": require.resolve("timers-browserify"),
+		"timers": require.resolve("timers-browserify"),
 //		"stream": require.resolve("stream-browserify"),
 //		"os": false,
 //		"path": false,

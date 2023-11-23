@@ -5,7 +5,7 @@ import EditElement from "./EditElement";
 import AddEditElement from "./AddEditElement";
 
 const sharp = window.require('sharp')
-const fs = window.require('fs').promises
+const fs = window.require('fs')
 
 export default function Edit(props) {
     let { editingTheme, setEditingTheme, themePath } = props;
@@ -40,12 +40,17 @@ export default function Edit(props) {
             }
         })
 
-        fs.writeFile(`${themePath + editingTheme.name + '/'}/theme.json`, JSON.stringify(finalArr, null, "\t"))
-            .then(() => {
-                if (e.target.elements.themeName.value != editingTheme.name) {
-                    fs.rename(themePath + editingTheme.name, themePath + e.target.elements.themeName.value).then(() => console.log('slam dunk'))
+        if (fs.existsSync(themePath + editingTheme.name)) {
+            fs.promises.writeFile(`${themePath + editingTheme.name}/theme.json`, JSON.stringify(finalArr, null, "\t")).then(() => {
+                if (editingTheme.name != e.target.elements.themeName.value) {
+                    fs.promises.rename(themePath + editingTheme.name, themePath + e.target.elements.themeName.value)
                 }
+
             })
+        }
+        else if(fs.existsSync(themePath + e.target.elements.themeName.value)){
+            fs.promises.writeFile(`${themePath + e.target.elements.themeName.value}/theme.json`, JSON.stringify(finalArr, null, "\t"))
+        }
         console.log(JSON.stringify(finalArr, null, "\t"));
 
     }
