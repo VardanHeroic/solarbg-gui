@@ -5,6 +5,7 @@ import GnomeThemeBlock from "./GnomeThemeBlock";
 import Loading from './Loading'
 
 const fs = window.require('fs').promises
+const child_process = window.require('child_process')
 const parser = new xml2js.Parser();
 
 export default function Home(props) {
@@ -54,8 +55,11 @@ export default function Home(props) {
         })
     }
 
-
-
+    function setWorkingTheme(themeName, mode, location) {
+        child_process.exec('killall solarbg', () => {
+            child_process.exec(`solarbg -m${mode} -t${themeName} -l${location}`)
+        })
+    }
 
     useEffect(() => {
         ls(themePath).catch(console.error)
@@ -69,15 +73,15 @@ export default function Home(props) {
         <div className="home">
             {
                 gnomeThemeArr.map((element, index) => {
-                    return <GnomeThemeBlock {...element} key={index} />
+                    return <GnomeThemeBlock setWorkingTheme={setWorkingTheme} {...element} key={index} />
                 })
 
             }
             {
                 solarThemeArr.map((element, index) => {
                     return (
-                        <article key={index} className='themeblock' style={{ "background": `url(${element.img})` }} >
-                            <h1>{element.name}</h1>
+                        <article onDoubleClick={() => { setWorkingTheme(element.name, 'solar', '40:45') }} key={index} className='themeblock' style={{ "background": `url(${element.img})` }} >
+                            <span>{element.name}</span>
                             <Link onClick={() => { setEditingTheme(element) }} to={`/edit/`}><h2>Edit</h2></Link>
                         </article>
                     )

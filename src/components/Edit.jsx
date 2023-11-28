@@ -48,7 +48,7 @@ export default function Edit(props) {
 
             })
         }
-        else if(fs.existsSync(themePath + e.target.elements.themeName.value)){
+        else if (fs.existsSync(themePath + e.target.elements.themeName.value)) {
             fs.promises.writeFile(`${themePath + e.target.elements.themeName.value}/theme.json`, JSON.stringify(finalArr, null, "\t"))
         }
         console.log(JSON.stringify(finalArr, null, "\t"));
@@ -74,7 +74,7 @@ export default function Edit(props) {
                     return <EditElement {...element} key={i} id={i} close={close} />
                 })
             }
-            <AddEditElement {...editingTheme} setEditingTheme={setEditingTheme} />
+            <AddEditElement {...props} />
             <Link to="/" onClick={() => { setEditingTheme({}) }}><h2>Back</h2></Link>
             <button type="submit">Save</button>
         </form>

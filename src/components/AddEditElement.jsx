@@ -2,10 +2,11 @@ const fs = window.require('fs').promises
 const sharp = window.require('sharp')
 
 function AddEditElement(props) {
-    let { context, setEditingTheme } = props
+    let { themePath, setEditingTheme, editingTheme } = props
     function onChange(e) {
-        fs.copyFile(e.target.files[0].path, context + e.target.files[0].name).catch(error => console.error(error))
-        let newEditingTheme = { ...props }
+        console.log(themePath + editingTheme.name + "/" + e.target.files[0].name,);
+        fs.copyFile(e.target.files[0].path, themePath + editingTheme.name + "/" + e.target.files[0].name).catch(error => console.error(error))
+        let newEditingTheme = { ...editingTheme }
         sharp(e.target.files[0].path)
             .resize({ height: 180, width: 320 })
             .toBuffer()

@@ -1,11 +1,10 @@
 import React from 'react'
-import {Link} from "react-router-dom";
 
 function GnomeThemeBlock(props) {
-	const {name, img} = props
+	const {name, img, setWorkingTheme} = props
 	return (
-		<article className='themeblock' style={{"background": `url(${img})`}} >
-			<h1>{name}</h1>     
+		<article className='themeblock' onDoubleClick={() => setWorkingTheme(name.split('.')[0],'gnome')} style={{"background": `url(${img})`}} >
+			<span>{name}</span>
 		</article>
 	)
 }
