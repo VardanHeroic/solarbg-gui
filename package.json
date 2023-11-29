@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "main": "public/electron.js",
+  "homepage": "./",
+  "author": "Vardan Tarayan <taryanvardan@gmail.com>",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "cross-env": "^7.0.3",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
@@ -17,14 +20,17 @@
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
     "webpack-ignore-dynamic-require": "^1.0.0",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "electron-is-dev": "^2.0.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-scripts build",
+    "react-build": "react-app-rewired build",
+    "build": "npm run react-build && npm run electron-build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "wait-on tcp:3000 && electron .",
+    "electron-build": "electron-builder -l pacman",
     "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\""
   },
   "eslintConfig": {
@@ -46,9 +52,11 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^8.2.1",
-    "electron": "^26.2.4",
-    "electron-is-dev": "^2.0.0",
-    "wait-on": "^7.0.1"
+    "@electron-forge/cli": "^7.1.0",
+    "concurrently": "^8.2.2",
+    "electron": "^26.6.1",
+    "electron-prebuilt-compile": "^8.2.0",
+    "wait-on": "^7.2.0",
+    "electron-builder": "^24.9.1"
   }
 }

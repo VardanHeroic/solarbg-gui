@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { HashRouter, Link, Route, Routes } from "react-router-dom";
 import Edit from './components/Edit';
 import Home from './components/Home';
 import { useState } from 'react';
@@ -31,14 +31,14 @@ function App() {
 
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <div className="App">
                 <Routes>
                     <Route exact path="/" element=<Home readImg={readImg} themePath={themePath} gnomeThemeArr={gnomeThemeArr} solarThemeArr={solarThemeArr} setGnomeThemeArr={setGnomeThemeArr} setSolarThemeArr={setSolarThemeArr} setEditingTheme={setEditingTheme} /> />
                     <Route exact path={`/edit/`} element=<Edit themePath={themePath} editingTheme={editingTheme} setEditingTheme={setEditingTheme} /> />
                 </Routes>
             </div>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 
