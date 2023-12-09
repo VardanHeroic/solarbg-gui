@@ -46,7 +46,7 @@ export default function Home(props) {
                         })
                         setSolarThemeArr(currentsolarThemeArr)
                     })
-            }
+           }
         })
 
         Promise.all(promiseArr).then(() => {
@@ -57,7 +57,12 @@ export default function Home(props) {
 
     function setWorkingTheme(themeName, mode, location) {
         child_process.exec('killall solarbg', () => {
-            child_process.exec(`solarbg -m${mode} -t${themeName} -l${location}`)
+            if (mode === "gnome") {
+                child_process.exec(`solarbg -m ${mode} -t ${themeName}`)
+            }
+            else {
+                child_process.exec(`solarbg -m ${mode} -t ${themeName} -l ${location}`)
+            }
         })
     }
 
@@ -79,6 +84,7 @@ export default function Home(props) {
             }
             {
                 solarThemeArr.map((element, index) => {
+                    console.log(element);
                     return (
                         <article onDoubleClick={() => { setWorkingTheme(element.name, 'solar', '40:45') }} key={index} className='themeblock' style={{ "background": `url(${element.img})` }} >
                             <span>{element.name}</span>
@@ -88,6 +94,10 @@ export default function Home(props) {
 
                 })
             }
+            <article className='themeblock'   >
+                <Link onClick={() => { setEditingTheme({ data: [], name: 'new theme' }) }} to={`/edit/`}><h2>Add theme</h2></Link>
+            </article>
+
         </div>
     )
 }
