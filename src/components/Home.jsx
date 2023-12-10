@@ -12,6 +12,12 @@ export default function Home(props) {
     let { gnomeThemeArr, setGnomeThemeArr, solarThemeArr, setSolarThemeArr, setEditingTheme, themePath, readImg } = props;
     let [isLoading, setIsLoading] = useState(true);
 
+    function deleteTheme(id) {
+        fs.rmdir(themePath + solarThemeArr[id].name,{recursive: true})
+        let newThemeArr = { ...solarThemeArr }
+        newThemeArr = solarThemeArr.filter((_, index) => index !== id)
+        setSolarThemeArr(newThemeArr)
+    }
 
     async function ls(path) {
         let currentsolarThemeArr = []
@@ -84,11 +90,11 @@ export default function Home(props) {
             }
             {
                 solarThemeArr.map((element, index) => {
-                    console.log(element);
                     return (
                         <article onDoubleClick={() => { setWorkingTheme(element.name, 'solar', '40:45') }} key={index} className='themeblock' style={{ "background": `url(${element.img})` }} >
                             <span>{element.name}</span>
                             <Link onClick={() => { setEditingTheme(element) }} to={`/edit/`}><h2>Edit</h2></Link>
+                            <button type="button" onClick={() => {deleteTheme(index)}}>X</button>
                         </article>
                     )
 
