@@ -91,7 +91,7 @@ export default function Home(props) {
             {
                 solarThemeArr.map((element, index) => {
                     return (
-                        <article onDoubleClick={() => { setWorkingTheme(element.name, 'solar', '40:45') }} key={index} className='themeblock' style={{ "background": `url(${element.img})` }} >
+                        <article onDoubleClick={() => { setWorkingTheme(element.name, 'solar', '40:45') }} key={index} className='themeblock' style={{ "backgroundImage": `url(${element.img})`, "backgroundSize": 'cover' }} >
                             <span>{element.name}</span>
                             <Link onClick={() => { setEditingTheme(element) }} to={`/edit/`}><h2>Edit</h2></Link>
                             <button type="button" onClick={() => {deleteTheme(index)}}>X</button>
@@ -101,7 +101,7 @@ export default function Home(props) {
                 })
             }
             <article className='themeblock'   >
-                <Link onClick={() => { setEditingTheme({ data: [], name: 'new theme' }) }} to={`/edit/`}><h2>Add theme</h2></Link>
+                <Link onClick={() => { setEditingTheme({ data: [], name: 'new theme' }) }} to={`/edit/`}><h2>Create theme</h2></Link>
             </article>
 
         </div>
