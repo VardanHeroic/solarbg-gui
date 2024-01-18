@@ -36,8 +36,7 @@ export default function Edit(props) {
             return {
                 path: element.path,
                 start: startArr[i],
-                end: endArr[i],
-                afternoon: startArr[i] > endArr[i]
+                end: endArr[i]
             }
         })
 

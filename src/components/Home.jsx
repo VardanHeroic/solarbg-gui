@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import GnomeThemeBlock from "./GnomeThemeBlock";
 import Loading from './Loading'
 
+const os = window.require('os')
 const fs = window.require('fs').promises
 const child_process = window.require('child_process')
 const parser = new xml2js.Parser();
@@ -25,7 +26,7 @@ export default function Home(props) {
         let promiseArr = []
         const dir = await fs.readdir(path)
         promiseArr = dir.map(dirent => {
-            if (dirent.includes('.xml')) {
+            if (dirent.includes('.xml') && os.platform() === 'linux' ) {
                 return fs.readFile(path + dirent)
                     .then((data) => {
                         return parser.parseStringPromise(data)
@@ -37,7 +38,7 @@ export default function Home(props) {
                         });
                     })
             }
-            else {
+            else if(!dirent.includes('.xml')){
                 return fs.readdir(path + dirent)
                     .then((files) => {
                         if (files.includes('theme.json')) {
